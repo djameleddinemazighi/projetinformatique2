@@ -1,0 +1,16 @@
+avant initialisation 
+- supprimer le ficher config/config.json
+- supprimer package-lock.json
+
+initialisation :
+- installer le CLI get sequelizer globalement 
+- ecrit ces commande :
+  - npm install
+  - sequilize init 
+  - sequilize db:migrate 
+  - npx sequelize-cli db:seed:all
+  - fix manually : turn text in long text in picture field in database in users table
+
+
+- modifier le ficher config/config.json avec les parametres de votre BDD
+ALTER TABLE `Users` CHANGE `photo` `photo` LONGTEXT CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL;
