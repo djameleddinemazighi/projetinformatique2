@@ -59,12 +59,36 @@ const routes = [
     component: () => import(/* webpackChunkName: "about" */ '../views/Courses.vue')
   },
   {
+    path: '/groupes',
+    name: 'groupes',
+    // route level code-splitting
+    // this generates a separate chunk (about.[hash].js) for this route
+    // which is lazy-loaded when the route is visited.
+    component: () => import(/* webpackChunkName: "about" */ '../views/Groupes.vue')
+  },
+  {
+    path: '/classe',
+    name: 'classe',
+    // route level code-splitting
+    // this generates a separate chunk (about.[hash].js) for this route
+    // which is lazy-loaded when the route is visited.
+    component: () => import(/* webpackChunkName: "about" */ '../views/classe.vue')
+  },
+  {
     path: '/createCourses',
     name: 'createCourses',
     // route level code-splitting
     // this generates a separate chunk (about.[hash].js) for this route
     // which is lazy-loaded when the route is visited.
     component: () => import(/* webpackChunkName: "about" */ '../views/createCourses.vue')
+  },
+  {
+    path: '/events',
+    name: 'events',
+    // route level code-splitting
+    // this generates a separate chunk (about.[hash].js) for this route
+    // which is lazy-loaded when the route is visited.
+    component: () => import(/* webpackChunkName: "about" */ '../views/Events.vue')
   },
 ]
 

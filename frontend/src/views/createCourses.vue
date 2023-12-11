@@ -1,7 +1,8 @@
 <!-- AddCourseComponent.vue -->
 
 <template>
-  <div class="add-course-container" v-if="authenticated">
+
+  <div class="add-course-container" v-if="authenticated && role == 'teacher' || role =='staff'">
     <h2>Add a New Course</h2>
 
       <div class="success-message" v-if="successMessage">{{ successMessage }}</div>
@@ -23,17 +24,20 @@
   </div>
 
    <div v-else>
-      <p>You need to be authenticated to access the courses add list.</p>
+      <p>You need to be a teacher to access the courses add list.</p>
     </div>
 
 </template>
 
 <script>
 import axios from 'axios';
+import { useCounterStore } from '@/store';
+const store = useCounterStore();
 
 export default {
   data() {
     return {
+      role:'',
       newCourse: {
         nom: '',
             description: '',
@@ -50,23 +54,23 @@ export default {
     created() {
     // Check if the user is authenticated
     this.authenticated = this.isAuthenticated();
-
+ this.role = store.getRole();
     // If authenticated, fetch the list of users
     if (this.authenticated) {
-        this.newCourse.email = localStorage.getItem('email');
+        this.newCourse.email = store.getEmail();
     } 
   },
     methods: {
      isAuthenticated() {
       // Check if the user is authenticated (e.g., JWT token is present)
-      const token = localStorage.getItem('token');
+      const token = store.getToken();
       return !!token;
     },
         addCourse() {
             this.successMessage = '';
             this.errorMessage = '';
       // Send the new course data to the backend
-      axios.post(`/api/courses/add/${localStorage.getItem('email')}`, this.newCourse, { headers: { "Authorization": `Bearer ${localStorage.getItem('token')}` , "email" : localStorage.getItem('email') } })
+      axios.post(`/api/courses/add/${store.getEmail()}`, this.newCourse, { headers: { "Authorization": `Bearer ${store.getToken()}` , "email" : store.getEmail() } })
         .then((response) => {
           // Handle success, you might want to redirect or show a success message
             console.log('Course added successfully:', response.data);

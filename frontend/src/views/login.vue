@@ -24,10 +24,32 @@
   </div>
 </template>
 
+
+<script setup>
+
+import { useCounterStore } from '@/store';
+
+const counterStore = useCounterStore();
+
+function login(email,role,token) {
+  counterStore.login(email,role,token);
+}
+
+function decrementCount() {
+  counterStore.decrement();
+}
+
+
+// Access the count value from the store
+
+</script>
+
 <script>
 import axios from 'axios';
-
+import { useCounterStore } from '@/store';
+ const store = useCounterStore();
 export default {
+  
   data() {
     return {
       credentials: {
@@ -47,8 +69,8 @@ export default {
            console.log(response);
           if (response.data.token) {
             // Save the token to the session
-            localStorage.setItem('token', response.data.token);
-            localStorage.setItem('email', response.data.email);
+            
+      store.login(response.data.email, response.data.role, response.data.token);
             // You can also set the token in Axios headers for future requests
             axios.defaults.headers.common['Authorization'] = `Bearer ${response.data.token}`;
             axios.defaults.headers.common['email'] = `${response.data.email}`;

@@ -6,7 +6,18 @@
 
 var app = require('../app');
 var debug = require('debug')('backend:server');
-var http = require('http');
+var https = require('https');
+const fs = require('fs');
+
+const privateKey = fs.readFileSync('server.key', 'utf8').toString();
+const certificate = fs.readFileSync('server.cert', 'utf8').toString();
+const credentials = {
+  key: privateKey,
+  cert: certificate,
+  ciphers: 'ECDHE-RSA-AES256-GCM-SHA384:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-SHA:ECDHE-RSA-AES128-SHA256:ECDHE-RSA-AES256-SHA:ECDHE-RSA-AES256-SHA384',
+    honorCipherOrder: true,
+    secureProtocol: 'TLSv1_2_method'
+};
 
 /**
  * Get port from environment and store in Express.
@@ -15,11 +26,15 @@ var http = require('http');
 var port = normalizePort(process.env.PORT || '3000');
 app.set('port', port);
 
+app.get('/', (req, res) => {
+   res.send('Now using https..');
+});
+
 /**
- * Create HTTP server.
+ * Create HTTPS server.
  */
 
-var server = http.createServer(app);
+var server = https.createServer(credentials, app);
 
 /**
  * Listen on provided port, on all network interfaces.
@@ -50,7 +65,7 @@ function normalizePort(val) {
 }
 
 /**
- * Event listener for HTTP server "error" event.
+ * Event listener for HTTPS server "error" event.
  */
 
 function onError(error) {
@@ -78,7 +93,7 @@ function onError(error) {
 }
 
 /**
- * Event listener for HTTP server "listening" event.
+ * Event listener for HTTPS server "listening" event.
  */
 
 function onListening() {

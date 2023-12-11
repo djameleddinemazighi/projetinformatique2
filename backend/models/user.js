@@ -21,6 +21,10 @@ module.exports = (sequelize, DataTypes) => {
   prenom: {
     type: DataTypes.STRING,
     allowNull: false,
+    },
+  groupe: {
+    type: DataTypes.STRING,
+    allowNull: true,
   },
   naissance: {
     type: DataTypes.DATE,

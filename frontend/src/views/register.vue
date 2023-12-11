@@ -36,6 +36,19 @@
   </div>
       </div>
 
+      <div v-if="user.selectedRole=='student'" class="form-group">
+        <label for="Role">Groupe:</label>
+        <div>
+    <select id="groupe" v-model="user.groupe">
+      <option v-for="(option, index) in groupes" :key="index" :value="option.name">
+        {{ option.name }}
+      </option>
+    </select>
+
+    <p>Selected Role: {{ user.groupe }}</p>
+  </div>
+      </div>
+
       <div class="form-group">
         <label for="naissance">Date de Naissance:</label>
         <input type="date" id="naissance" v-model="user.naissance" required>
@@ -81,6 +94,7 @@ export default {
       user: {
         nom: '',
         prenom: '',
+        groupe:'',
         naissance: '',
         photo: null,
         telephone: '',
@@ -98,6 +112,13 @@ export default {
       axios.get('/api/role/roles')
         .then((response) => {
           this.Roles = response.data;
+        })
+        .catch((error) => {
+          console.error('Failed to retrieve users:', error);
+        });
+        axios.get('/api/user/groupes')
+        .then((response) => {
+          this.groupes = response.data;
         })
         .catch((error) => {
           console.error('Failed to retrieve users:', error);

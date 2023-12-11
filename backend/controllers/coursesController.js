@@ -35,6 +35,34 @@ router.get('/get', async (req, res) => {
   }
 });
 
+router.put('/update/:id', async (req, res) => {
+    const { id } = req.params;
+  const { nom, description } = req.body;
+
+  try {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
+    }
+
+    const course = await Courses.findByPk(id);
+    if (!course) {
+      return res.status(404).json({ error: 'Course not found' });
+    }
+
+    // Update course properties
+    course.nom = nom;
+    course.description = description;
+
+    await course.save();
+
+    return res.json({ success: 'Course updated successfully' });
+  } catch (error) {
+    console.error('Error updating course:', error);
+    return res.status(500).json({ error: 'Course update failed' });
+  }
+});
+
 // Add a new course
 router.post('/add/:email', authenticateJWT, coursesaddvalidation, async (req, res,next) => {
 
@@ -45,7 +73,7 @@ router.post('/add/:email', authenticateJWT, coursesaddvalidation, async (req, re
       const userData = await user.findOne({ where: { email: userEmail } });
 
       // Check if the user has the required role
-      if (userData && userData.selectedRole.includes('teacher')) {
+      if (userData && userData.selectedRole.includes('teacher') || userData.selectedRole.includes('staff') ) {
         // User has the required role, proceed to the next middleware or route handler
          try {
       const { nom, description, email } = req.body;

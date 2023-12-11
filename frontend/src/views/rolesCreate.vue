@@ -1,8 +1,9 @@
 <template>
-  <div class="role-form">
+  <div class="role-form" v-if="authenticated && prev == 'staff'">
     <h2>Add Role</h2>
     <div v-if="notauthenticated">
     Connecter vous pour avoir la liste</div>
+    <div v-if="prev != 'staff'"> you need to be university staff to add a role</div>
     <div class="success-message" v-if="successMessage">{{ successMessage }}</div>
 <div class="error-message" v-if="errorMessage">{{ errorMessage }}</div>
     <form @submit.prevent="addRole">
@@ -18,10 +19,13 @@
 
 <script>
 import axios from 'axios';
+import { useCounterStore } from '@/store';
+const store = useCounterStore();
 
 export default {
   data() {
     return {
+      prev:'',
       role: {
         nom: '',
       },
@@ -34,7 +38,8 @@ export default {
    created() {
     // Check if the user is authenticated
     this.authenticated = this.isAuthenticated();
-
+     this.prev = store.getRole();
+ console.log(this.prev)
     // If authenticated, fetch the list of users
     if (this.authenticated) {
       //nn
@@ -45,13 +50,13 @@ export default {
     methods: {
     isAuthenticated() {
       // Check if the user is authenticated (e.g., JWT token is present)
-      const token = localStorage.getItem('token');
+      const token = store.getToken();
       return !!token;
     },
     addRole() {
       // Send the role data to the backend
       axios
-        .post('/api/role/create', this.role , { headers: { "Authorization": `Bearer ${localStorage.getItem('token')}` } })
+        .post('/api/role/create', this.role , { headers: { "Authorization": `Bearer ${store.getToken()}` } })
           .then((response) => {
             console.log(response)
           if (response.data) {

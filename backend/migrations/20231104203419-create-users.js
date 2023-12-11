@@ -17,6 +17,10 @@ module.exports = {
         type: Sequelize.STRING,
         allowNull: false
       },
+      groupe: {
+        type: Sequelize.STRING,
+        allowNull: true
+      },
       naissance: {
         type: Sequelize.DATE, // Use the appropriate data type for the birthdate
         allowNull: false
