@@ -3,7 +3,7 @@
 <template>
   <div v-if="authenticated && role === 'staff'" style="display: flex;flex-direction: column;justify-content: center;">
     <h2>Courses List</h2>
-    <div v-if="notAuthenticated">
+    <div v-if="notauthenticated">
       Please log in to view the list.
     </div>
     <div v-else style="    align-self: center;">
@@ -66,6 +66,8 @@ const store = useCounterStore();
 export default {
   data() {
     return {
+      successMessage:'',
+      errorMessage:'',
       role:'',
       editCourseId:'',
       courses: [],
@@ -112,6 +114,25 @@ export default {
       } catch (error) {
         console.error('Error fetching courses:', error);
       }
+    },
+    deleteCourse(e) {
+      axios.delete(`/api/courses/delete/${e.target.id}`, {
+        headers: { Authorization: `Bearer ${store.getToken()}`, email: store.getEmail() },
+      })
+        .then((response) => {
+          if (response.data.success) {
+            this.successMessage = 'Course deleted successfully!';
+            this.errorMessage = '';
+            this.fetchCourses();
+          } else {
+            this.successMessage = '';
+            this.errorMessage = response.data.error;
+          }
+        })
+        .catch((errors) => {
+          this.successMessage = '';
+          this.errorMessage = errors.response.data.error;
+        });
     },
     async addComment(courseId) {
       try {

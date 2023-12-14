@@ -63,6 +63,34 @@ router.put('/update/:id', async (req, res) => {
   }
 });
 
+router.delete('/delete/:id', authenticateJWT, async (req, res) => {
+  const { id } = req.params;
+  const email = req.get('email');
+  
+  try {
+      // Fetch the user from the database
+      const User = await user.findOne({ where: { email } });
+
+      if (!User || User.selectedRole !== 'staff' ) {
+          return res.status(401).json({ error: 'You do not have the privilege to delete roles' });
+      }
+
+      const CourseToDelete = await Courses.findOne({ where: { id } });
+
+      if (!CourseToDelete) {
+          return res.status(404).json({ error: 'Course not found' });
+      }
+
+      // Delete the role
+      await Courses.destroy({ where: { id } });
+
+      return res.json({ success: 'Course deleted successfully' });
+  } catch (error) {
+      console.error(error);
+      return res.status(500).json({ error: 'Course deletion failed' });
+  }
+});
+
 // Add a new course
 router.post('/add/:email', authenticateJWT, coursesaddvalidation, async (req, res,next) => {
 
